@@ -12,6 +12,22 @@ import javax.validation.constraints.NotNull;
  */
 @Embeddable
 public class Location {
+    public Location() {
+    }
+
+    public Location(Double lat, Double lon) {
+        this.lat = lat;
+        this.lon = lon;
+    }
+
+    public Location(@NotNull Double lat, @NotNull Double lon, String address, String city, String state, String zip) {
+        this.lat = lat;
+        this.lon = lon;
+        this.address = address;
+        this.city = city;
+        this.state = state;
+        this.zip = zip;
+    }
 
     @NotNull
     private Double lat;
@@ -30,14 +46,6 @@ public class Location {
 
     @Transient
     private String zip;
-
-    public Location() {
-    }
-
-    public Location(Double lat, Double lon) {
-        this.lat = lat;
-        this.lon = lon;
-    }
 
     public Double getLat() {
         return lat;

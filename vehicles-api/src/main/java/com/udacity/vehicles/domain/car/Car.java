@@ -24,6 +24,18 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class Car {
 
+    public Car() {}
+
+    public Car(Long id, LocalDateTime createdAt, LocalDateTime modifiedAt, Condition condition, Details details, Location location, String price) {
+        this.id = id;
+        this.createdAt = createdAt;
+        this.modifiedAt = modifiedAt;
+        this.condition = condition;
+        this.details = details;
+        this.location = location;
+        this.price = price;
+    }
+
     @Id
     @GeneratedValue
     private Long id;

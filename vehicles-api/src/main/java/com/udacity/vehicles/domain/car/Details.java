@@ -1,6 +1,7 @@
 package com.udacity.vehicles.domain.car;
 
 import com.udacity.vehicles.domain.manufacturer.Manufacturer;
+
 import javax.persistence.Embeddable;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
@@ -12,6 +13,22 @@ import javax.validation.constraints.NotNull;
  */
 @Embeddable
 public class Details {
+
+    public Details() {
+    }
+
+    public Details(@NotBlank String body, @NotBlank String model, @NotNull Manufacturer manufacturer, Integer numberOfDoors, String fuelType, String engine, Integer mileage, Integer modelYear, Integer productionYear, String externalColor) {
+        this.body = body;
+        this.model = model;
+        this.manufacturer = manufacturer;
+        this.numberOfDoors = numberOfDoors;
+        this.fuelType = fuelType;
+        this.engine = engine;
+        this.mileage = mileage;
+        this.modelYear = modelYear;
+        this.productionYear = productionYear;
+        this.externalColor = externalColor;
+    }
 
     @NotBlank
     private String body;
