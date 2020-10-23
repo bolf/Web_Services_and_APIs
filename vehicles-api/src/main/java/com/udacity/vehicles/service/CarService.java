@@ -4,6 +4,8 @@ import com.udacity.vehicles.client.maps.MapsClient;
 import com.udacity.vehicles.client.prices.PriceClient;
 import com.udacity.vehicles.domain.car.Car;
 import com.udacity.vehicles.domain.car.CarRepository;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,12 +34,23 @@ public class CarService {
         this.mapsClient = mapsClient;
     }
 
+    private void setAddressAndPriceForCar(Car car){
+        car.setPrice(priceClient.getPrice(car.getId()));
+        car.setLocation(mapsClient.getAddress(car.getLocation()));
+    }
+
     /**
      * Gathers a list of all vehicles
      * @return a list of all vehicles in the CarRepository
      */
     public List<Car> list() {
-        return repository.findAll();
+        List<Car> carList = repository.findAll();
+
+        for (Car car: carList) {
+            setAddressAndPriceForCar(car);
+        }
+
+        return carList;
     }
 
     /**
@@ -61,7 +74,7 @@ public class CarService {
          * Note: The car class file uses @transient, meaning you will need to call
          *   the pricing service each time to get the price.
          */
-        car.setPrice(priceClient.getPrice(id));
+
 
         /**
          * COMPLETED: Use the Maps Web client you create in `VehiclesApiApplication`
@@ -71,7 +84,7 @@ public class CarService {
          * Note: The Location class file also uses @transient for the address,
          * meaning the Maps service needs to be called each time for the address.
          */
-        car.setLocation(mapsClient.getAddress(car.getLocation()));
+        setAddressAndPriceForCar(car);
 
         return car;
     }
@@ -82,16 +95,22 @@ public class CarService {
      * @return the new/updated car is stored in the repository
      */
     public Car save(Car car) {
+        Car savedCar = null;
         if (car.getId() != null) {
-            return repository.findById(car.getId())
+            savedCar = repository.findById(car.getId())
                     .map(carToBeUpdated -> {
                         carToBeUpdated.setDetails(car.getDetails());
                         carToBeUpdated.setLocation(car.getLocation());
+                        carToBeUpdated.setCondition(car.getCondition());
+                        carToBeUpdated.setModifiedAt(LocalDateTime.now());
                         return repository.save(carToBeUpdated);
                     }).orElseThrow(CarNotFoundException::new);
+            setAddressAndPriceForCar(savedCar);
+            return savedCar;
         }
-
-        return repository.save(car);
+        savedCar = repository.save(car);
+        setAddressAndPriceForCar(savedCar);
+        return savedCar;
     }
 
     /**
@@ -100,15 +119,13 @@ public class CarService {
      */
     public void delete(Long id) {
         /**
-         * TODO: Find the car by ID from the `repository` if it exists.
+         * COMPLETED: Find the car by ID from the `repository` if it exists.
          *   If it does not exist, throw a CarNotFoundException
          */
-
-
+        Car foundCar = repository.findById(id).orElseThrow(CarNotFoundException::new);
         /**
-         * TODO: Delete the car from the repository.
+         * COMPLETED: Delete the car from the repository.
          */
-
-
+        repository.delete(foundCar);
     }
 }
